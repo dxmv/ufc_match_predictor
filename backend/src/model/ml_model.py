@@ -1,21 +1,23 @@
 import pandas as pd
 import numpy as np
-from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-PATH_TO_DATA = "../data/ufc-master.csv"
+PATH_TO_DATA = "../data/previous-matches.csv"
 
 class UFCModel:
     def __init__(self):
         # Load data
         self.df = pd.read_csv(PATH_TO_DATA)
-        self.features = ["RedAge","BlueAge"]
+        # TODO: Add more features
+        self.features = ["AgeDif","BetterRank","ReachDif","RedOdds","BlueOdds","WinDif","LossDif","HeightDif","WinStreakDif","LoseStreakDif","TotalTitleBoutDif"]
         self.extend_data()
-        self.model = LogisticRegression()
+        self.model = RandomForestClassifier()
 
 
     def extend_data(self):
         # Create target variable (1 for R_fighter win, 0 for B_fighter win)
         self.df['target'] = (self.df['Winner'] == 'Red').astype(int)
+        self.df['BetterRank'] = (self.df["BetterRank"] == "Red").astype(int)
 
         # Fill missing values with 0
         self.df[self.features] = self.df[self.features].fillna(0)
@@ -32,11 +34,14 @@ class UFCModel:
 
         # Evaluate model
         score = self.model.score(X_test, y_test)
-        print(f"Model accuracy: {score:.2f}")
         return score
 
 
 model = UFCModel()
+score = model.train()
+print(f"Model accuracy: {score:.2f}")
+score = model.train()
+print(f"Model accuracy: {score:.2f}")
 score = model.train()
 print(f"Model accuracy: {score:.2f}")
 
