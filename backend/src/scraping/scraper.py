@@ -96,14 +96,54 @@ def scrape_fighter_profile(fighter_link: str):
         return None
     soup = BeautifulSoup(response.content, 'html.parser')
 
-    # get the age
-    age = soup.find('div', class_='field--name-age').text.strip()
     # get the win/loss/draw
     [wins, draws, losses] = soup.find('p', class_='hero-profile__division-body').text.strip().split(' ')[0].split('-')
-    # get the height
 
+    # get the age
+    age = soup.find('div', class_='field--name-age').text.strip()
+
+    all_rows_with_3_cols = soup.find_all('div', class_='c-bio__row--3col')
+    # row with height & weight
+    bio_row_3 = all_rows_with_3_cols[0]
+    # get the height
+    height_div = bio_row_3.find_all('div', class_='c-bio__text')
+    height_cms = inches_to_cms(float(height_div[1].text.strip())) if len(height_div) > 1 else 0.0
+    # row with reach & leg reach
+    bio_row_4 = all_rows_with_3_cols[1]
     # get the reach
-    reach = soup.find('div', class_='field--name-reach').text.strip()
+    reach_div = bio_row_4.find_all('div', class_='c-bio__text')
+    reach_cms = inches_to_cms(float(reach_div[1].text.strip())) if len(reach_div) > 1 else 0.0
+    # get the leg reach
+    leg_reach_cm = inches_to_cms(float(reach_div[2].text.strip())) if len(reach_div) > 2 else 0.0
+
+    athlete_stats = soup.find_all('div', class_='athlete-stats__stat')
+    # get wins by ko
+    wins_by_ko = 0
+    # get wins by submission
+    wins_by_sub = 0
+    for stat in athlete_stats:
+        if isinstance(stat, str):  # Check if stat is a string
+            continue  # Skip string nodes
+        text = stat.find("p", class_="athlete-stats__text athlete-stats__stat-text").text.strip()
+        value = stat.find("p", class_="athlete-stats__stat-numb").text.strip()
+        if text.lower() == "wins by knockout":
+            wins_by_ko = int(value)
+        elif text.lower() == "wins by submission":
+            wins_by_sub = int(value)
+            
+    # get the significant strikes
+    sig_strikes_div = soup.find('div', class_='c-stat-compare__group c-stat-compare__group-1')
+    sig_strikes_number = sig_strikes_div.find('div', class_='c-stat-compare__number') if sig_strikes_div else None
+    sig_strikes_per_min = float(sig_strikes_number.text.strip()) if sig_strikes_number else 0.0
+    # get the rank
+    tags = soup.find_all('p', class_='hero-profile__tag')
+    rank = None
+    if len(tags) > 1:
+        [pfp,text] = tags[1].text.strip().split(' ') if len(tags[1].text.strip().split(' ')) > 1 else [None, tags[1].text.strip()]
+        if text == 'PFP':
+            rank = int(pfp[1:]) if pfp else None
+    print(sig_strikes_per_min, rank)
+
 
 def scrape_upcoming_matches():
     """
@@ -130,3 +170,4 @@ def scrape_upcoming_matches():
 
 if __name__ == "__main__":
     scrape_upcoming_matches()
+    #scrape_fighter_profile("https://www.ufc.com/athlete/jon-jones")

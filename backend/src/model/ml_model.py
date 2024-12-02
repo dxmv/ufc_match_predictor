@@ -10,7 +10,7 @@ class UFCModel:
         # Load data
         self.df = pd.read_csv(PATH_TO_DATA)
         # TODO: Add more features
-        self.features = ["AgeDif","BetterRank","ReachDif","RedOdds","BlueOdds","WinDif","LossDif","HeightDif","WinStreakDif","LoseStreakDif","TotalTitleBoutDif"]
+        self.features = ["AgeDif","BetterRank","ReachDif","RedOdds","BlueOdds","WinDif","LossDif","HeightDif","SigStrDif","KODif","SubDif"]
         self.extend_data()
         self.scaler = StandardScaler()
         self.model = LogisticRegression(max_iter=500)
@@ -19,7 +19,7 @@ class UFCModel:
     def extend_data(self):
         # Create target variable (1 for R_fighter win, 0 for B_fighter win)
         self.df['target'] = (self.df['Winner'] == 'Red').astype(int)
-        self.df['BetterRank'] = (self.df["BetterRank"] == "Red").astype(int)
+        self.df['BetterRank'] = self.df['BetterRank'].map({'Red': 1, 'Blue': -1, 'Neither': 0})
 
         # Fill missing values with 0
         self.df[self.features] = self.df[self.features].fillna(0)
@@ -53,6 +53,10 @@ class UFCModel:
 
 model = UFCModel()
 score = model.train()
-print(f"Model accuracy: {score:.2f}")
+print(f"Model accuracy: {score:.5f}")
+score = model.train()
+print(f"Model accuracy: {score:.5f}")
+score = model.train()
+print(f"Model accuracy: {score:.5f}")
 
 
