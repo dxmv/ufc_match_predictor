@@ -50,13 +50,36 @@ class UFCModel:
         score = self.model.score(X_test, y_test)
         return score
 
+    def predict(self, upcoming_data_path: str):
+        """
+        This method predicts the results for upcoming matches using the trained model.
+        
+        Args:
+            upcoming_data_path (str): The path to the CSV file containing upcoming match data.
+        
+        Returns:
+            np.ndarray: Predictions for the upcoming matches (1 for R_fighter win, 0 for B_fighter win).
+        """
+        # Load upcoming data
+        upcoming_df = pd.read_csv(upcoming_data_path)
+
+        # Preprocess the data
+        upcoming_df['BetterRank'] = upcoming_df['BetterRank'].map({'Red': 1, 'Blue': -1, 'Neither': 0})
+        upcoming_df[self.features] = upcoming_df[self.features].fillna(0)
+
+        # Scale features
+        X_upcoming = self.scaler.transform(upcoming_df[self.features])
+
+        # Make predictions
+        predictions = self.model.predict(X_upcoming)
+        return predictions
 
 model = UFCModel()
 score = model.train()
 print(f"Model accuracy: {score:.5f}")
-score = model.train()
-print(f"Model accuracy: {score:.5f}")
-score = model.train()
-print(f"Model accuracy: {score:.5f}")
+
+# Example usage
+upcoming_predictions = model.predict("../data/upcoming.csv")
+print("Predictions for upcoming matches:", upcoming_predictions)
 
 

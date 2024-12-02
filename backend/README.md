@@ -1,10 +1,11 @@
 ## Scraping
 
-- [ ] Scrape the upcoming match data
-- [ ] Get all the differences between the fighters
-- [ ] Add it as a row to the "upcoming_matches.csv"
+- [x] Scrape the upcoming match data
+- [x] Get all the differences between the fighters
+- [x] Add it as a row to the "upcoming_matches.csv"
 - [ ] At the end of each week, add the "upcoming_matches.csv" to "previous_matches.csv"
 - [ ] Remove unnecessary columns from the "previous_matches.csv"
+- [ ] Make sure that the "upcoming_matches.csv" matches the "previous_matches.csv" format
 
 ## Model
 
@@ -15,7 +16,7 @@
     - [ ] Try to improve the accuracy using the fighting style of the fighters
 - [ ] Save the model
 - [ ] Load the model
-- [ ] Make predictions
+- [x] Make predictions
 
 ## API
 

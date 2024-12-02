@@ -57,25 +57,81 @@ def scrape_matches(event_soup):
         event_soup (BeautifulSoup): The parsed HTML of the event page.
     """
     matches = event_soup.find_all('div', class_='c-listing-fight__content')
+    match_data_list = []  # Initialize an empty list to store match data
+
     for match in matches:
         # get the fighter names
         red_fighter = match.find('div', class_='c-listing-fight__corner-name--red')
         blue_fighter = match.find('div', class_='c-listing-fight__corner-name--blue')
         [red_name, blue_name] = [fighter.text.strip().replace('\n', ' ') for fighter in [red_fighter, blue_fighter]]
+        print(f"Adding match: {red_name} vs {blue_name}...")
+        
         # get the odds
-        [red_odds, blue_odds] = match.find_all('span', class_='c-listing-fight__odds')
+        [red_odds, blue_odds] = match.find_all('span', class_='c-listing-fight__odds-amount')
+        red_odds = int(red_odds.text.strip().replace('+', ''))
+        blue_odds = int(blue_odds.text.strip().replace('+', ''))
 
         # get the links to the fighters' profiles
         red_link = red_fighter.find('a').get('href')
         blue_link = blue_fighter.find('a').get('href')
+        print(f"Scraping fighter profiles: {red_link} and {blue_link}...")
+        
         # scrape both fighters' profiles
         red_profile = scrape_fighter_profile(red_link)
         blue_profile = scrape_fighter_profile(blue_link)
-        # add all of this to the csv
+
+        # Create a dictionary for the match data
+        match_data = {
+            'RedFighter': red_name,
+            'BlueFighter': blue_name,
+            'RedOdds': red_odds,
+            'BlueOdds': blue_odds,
+        }
+        
+        # Add all keys from RedProfile separately
+        for key, value in red_profile.items():
+            match_data[f'Red_{key}'] = value
+        
+        # Add all keys from BlueProfile separately
+        for key, value in blue_profile.items():
+            match_data[f'Blue_{key}'] = value
+
+        # Add differences in relevant attributes
+        match_data['HeightDif'] = red_profile['height_cms'] - blue_profile['height_cms']
+        match_data['ReachDif'] = red_profile['reach_cms'] - blue_profile['reach_cms']
+        match_data['LegReachDif'] = red_profile['leg_reach_cm'] - blue_profile['leg_reach_cm']
+        match_data['WinDif'] = red_profile['wins'] - blue_profile['wins']
+        match_data['LossDif'] = red_profile['losses'] - blue_profile['losses']
+        match_data['DrawDif'] = red_profile['draws'] - blue_profile['draws']
+        match_data['AgeDif'] = red_profile['age'] - blue_profile['age']
+        match_data['KODif'] = red_profile['wins_by_ko'] - blue_profile['wins_by_ko']
+        match_data['SubDif'] = red_profile['wins_by_sub'] - blue_profile['wins_by_sub']
+        match_data['SigStrDif'] = red_profile['sig_strikes_per_min'] - blue_profile['sig_strikes_per_min']
+        # determine who has the better rank
+        if red_profile['rank'] is None and blue_profile['rank'] is None:
+            match_data['BetterRank'] = 'Neither'
+        elif red_profile['rank'] is None:
+            match_data['BetterRank'] = 'Blue'
+        elif blue_profile['rank'] is None:
+            match_data['BetterRank'] = 'Red'
+        else:
+            if red_profile['rank'] < blue_profile['rank']:
+                match_data['BetterRank'] = 'Red'
+            elif red_profile['rank'] > blue_profile['rank']:
+                match_data['BetterRank'] = 'Blue'
+            else:
+                match_data['BetterRank'] = 'Neither'
+
+        # Append the match data to the list
+        match_data_list.append(match_data)
+        print(f"Added match: {red_name} vs {blue_name}")
+
+    # Use the data manager to update the upcoming matches CSV
+    update_upcoming_matches(match_data_list)
 
 def scrape_fighter_profile(fighter_link: str):
     """
-    Scrapes the fighter's profile page.
+    Scrapes the fighter's profile page and returns the fighter's information.
     """
     def inches_to_cms(inches):
         """
@@ -142,7 +198,21 @@ def scrape_fighter_profile(fighter_link: str):
         [pfp,text] = tags[1].text.strip().split(' ') if len(tags[1].text.strip().split(' ')) > 1 else [None, tags[1].text.strip()]
         if text == 'PFP':
             rank = int(pfp[1:]) if pfp else None
-    print(sig_strikes_per_min, rank)
+
+    # Return all the collected information as a dictionary
+    return {
+        "wins": int(wins),
+        "draws": int(draws),
+        "losses": int(losses),
+        "age": int(age),
+        "height_cms": height_cms,
+        "reach_cms": reach_cms,
+        "leg_reach_cm": leg_reach_cm,
+        "wins_by_ko": wins_by_ko,
+        "wins_by_sub": wins_by_sub,
+        "sig_strikes_per_min": sig_strikes_per_min,
+        "rank": rank
+    }
 
 
 def scrape_upcoming_matches():
