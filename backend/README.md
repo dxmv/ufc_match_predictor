@@ -6,6 +6,11 @@
 - [ ] At the end of each week, add the "upcoming_matches.csv" to "previous_matches.csv"
 - [ ] Remove unnecessary columns from the "previous_matches.csv"
 - [ ] Make sure that the "upcoming_matches.csv" matches the "previous_matches.csv" format
+- [ ] Scrape more
+    - [ ] Location
+    - [ ] Date
+    - [ ] Name of event
+    - [ ] Weight class
 
 ## Model
 

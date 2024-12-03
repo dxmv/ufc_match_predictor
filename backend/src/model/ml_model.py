@@ -4,7 +4,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 PATH_TO_DATA = "../data/previous-matches.csv"
-
+PATH_TO_UPCOMING_DATA = "../data/upcoming.csv"
 class UFCModel:
     def __init__(self):
         # Load data
@@ -48,9 +48,14 @@ class UFCModel:
 
         # Evaluate model
         score = self.model.score(X_test, y_test)
+
+        # Add predicted column to the dataframe
+        self.df['predicted'] = self.model.predict(X)
+        self.df.to_csv(PATH_TO_DATA, index=False)
+
         return score
 
-    def predict(self, upcoming_data_path: str):
+    def predict(self):
         """
         This method predicts the results for upcoming matches using the trained model.
         
@@ -61,7 +66,7 @@ class UFCModel:
             np.ndarray: Predictions for the upcoming matches (1 for R_fighter win, 0 for B_fighter win).
         """
         # Load upcoming data
-        upcoming_df = pd.read_csv(upcoming_data_path)
+        upcoming_df = pd.read_csv(PATH_TO_UPCOMING_DATA)
 
         # Preprocess the data
         upcoming_df['BetterRank'] = upcoming_df['BetterRank'].map({'Red': 1, 'Blue': -1, 'Neither': 0})
@@ -72,14 +77,19 @@ class UFCModel:
 
         # Make predictions
         predictions = self.model.predict(X_upcoming)
+
+        # Add predicted column to the upcoming dataframe
+        upcoming_df['predicted'] = predictions
+
+        # Save the result
+        upcoming_df.to_csv(upcoming_data_path, index=False)
+
         return predictions
 
 model = UFCModel()
-score = model.train()
-print(f"Model accuracy: {score:.5f}")
+# score = model.train()
+# print(f"Model accuracy: {score:.5f}")
 
 # Example usage
-upcoming_predictions = model.predict("../data/upcoming.csv")
-print("Predictions for upcoming matches:", upcoming_predictions)
-
-
+# upcoming_predictions = model.predict("../data/upcoming.csv")
+# print("Predictions for upcoming matches:", upcoming_predictions)
