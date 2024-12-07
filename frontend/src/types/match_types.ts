@@ -1,8 +1,15 @@
-interface Match {
+interface Fighter {
     id: string;
-    date: string;
-    time: string;
-    location: string;
+    name: string;
+    image_url: string;
 }
 
-export default Match;
+interface Match {
+    id: string;
+    red_fighter: Fighter;
+    blue_fighter: Fighter;
+    red_odds: number;
+    blue_odds: number;
+}
+
+export type { Fighter, Match };
