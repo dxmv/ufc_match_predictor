@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask_cors import CORS
 import pandas as pd
 
 PATH_TO_UPCOMING_DATA = "./data/upcoming.csv"
@@ -6,6 +7,7 @@ PATH_TO_PREVIOUS_DATA = "./data/previous-matches.csv"
 
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/upcoming")
 def upcoming():

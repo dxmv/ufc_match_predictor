@@ -30,7 +30,7 @@ const MatchCard = ({ match }: { match: Match }) => {
 const FighterPart = ({ fighter, blue }: { fighter: Fighter, blue?: boolean }) => {
     return (
         <div className={`flex flex-row items-center ${blue ? 'flex-row-reverse' : ''}`}>
-            <img src={fighter.image_url} alt={fighter.name} className='max-w-80 max-h-80' />
+            <img src={"https://dmxg5wxfqgb4u.cloudfront.net/2024-11/JONES_JON_BELT_11-16.png"} alt={fighter.name} className='max-w-80 max-h-80' />
             <div className='ml-4 text-lg font-bold'>{fighter.name}</div>
         </div>
     );

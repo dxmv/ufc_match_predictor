@@ -1,10 +1,9 @@
-interface Fighter {
+export interface Fighter {
     id: string;
     name: string;
-    image_url: string;
 }
 
-interface Match {
+export interface Match {
     id: string;
     red_fighter: Fighter;
     blue_fighter: Fighter;
@@ -12,4 +11,9 @@ interface Match {
     blue_odds: number;
 }
 
-export type { Fighter, Match };
+export interface UFCEvent {
+    name: string;
+    date: string;
+    location: string;
+    matches: Match[];
+}
