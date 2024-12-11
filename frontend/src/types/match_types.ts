@@ -9,6 +9,7 @@ export interface Match {
     blue_fighter: Fighter;
     red_odds: number;
     blue_odds: number;
+    winner: "Red" | "Blue" | null;
 }
 
 export interface UFCEvent {

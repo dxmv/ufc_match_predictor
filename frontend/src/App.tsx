@@ -7,6 +7,7 @@ import Upcoming from './pages/Upcoming';
 import Previous from './pages/Previous';
 import EventPage from './pages/EventPage';
 import { UFCEvent } from './types/match_types';
+import MatchPage from './pages/MatchPage';
 
 const App: React.FC = () => {
 
@@ -25,6 +26,7 @@ const App: React.FC = () => {
                 <Route path="/upcoming" element={<Upcoming />} />
                 <Route path="/previous" element={<Previous />} />
                 <Route path="/event/:eventId" element={<EventPage event={event} />} />
+                <Route path="/match/:matchId" element={<MatchPage />} />
             </Routes>
             <Footer />
         </Router>

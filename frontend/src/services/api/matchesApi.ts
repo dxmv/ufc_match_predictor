@@ -8,7 +8,7 @@ const BACKEND_URL = "http://127.0.0.1:5000";
  * @returns A Match object
  */
 const mapToMatchType = (rawMatch: any): Match => {
-    const redFighter: Fighter = { id: 'red', name: rawMatch.RedFighter };
+    const redFighter: Fighter = { id: 'red', name: rawMatch.RedFighter, };
     const blueFighter: Fighter = { id: 'blue', name: rawMatch.BlueFighter };
 
     return {
@@ -17,7 +17,7 @@ const mapToMatchType = (rawMatch: any): Match => {
         blue_fighter: blueFighter,
         red_odds: rawMatch.RedOdds,
         blue_odds: rawMatch.BlueOdds,
-        // Add other necessary fields here if needed
+        winner: rawMatch.Winner,
     };
 };
 
@@ -38,4 +38,19 @@ export const fetchPreviousMatches = async (): Promise<Array<Match>> => {
     return data.map(mapToMatchType);
 };
 
-export default { fetchPreviousMatches };
+/**
+ * Fetches the upcoming matches from the backend
+ * @returns An array of Match objects
+ */
+export const fetchUpcomingMatches = async (): Promise<Array<Match>> => {
+    const response = await fetch(`${BACKEND_URL}/upcoming`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    const data = await response.json();
+
+    // Map the incoming data to the Match type
+    return data.map(mapToMatchType);
+};
