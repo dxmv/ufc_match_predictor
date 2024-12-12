@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import EventPage from './EventPage';
 import { UFCEvent } from '../types/match_types';
 import { fetchUpcomingMatches } from '../services/api/matchesApi';
+import Loading from '../components/Loading';
 
 const Upcoming: React.FC = () => {
     const [event, setEvent] = useState<UFCEvent | null>(null);
@@ -20,9 +21,9 @@ const Upcoming: React.FC = () => {
     },[]);
 
     return (
-        <div>
-            {event ? <EventPage event={event} /> : <div>Loading...</div>}
-        </div>
+        <>
+            {event ? <EventPage event={event} /> : <Loading />}
+        </>
     );
 };
 

@@ -25,8 +25,8 @@ const mapToMatchType = (rawMatch: any): Match => {
  * Fetches the previous matches from the backend
  * @returns An array of Match objects
  */
-export const fetchPreviousMatches = async (): Promise<Array<Match>> => {
-    const response = await fetch(`${BACKEND_URL}/previous`, {
+export const fetchPreviousMatches = async (page?: number,per_page?: number): Promise<Array<Match>> => {
+    const response = await fetch(`${BACKEND_URL}/previous?page=${page}&per_page=${per_page}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
