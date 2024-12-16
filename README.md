@@ -23,10 +23,14 @@
 
 ### Server
 - [ ] Route for a single match
+- [ ] Route for accuracy   
 
 ### Scraping
-- [ ] Scrape location & date of the fight
-- [ ] Add all fighters stats to the upcoming.csv
+- [x] Scrape location & date of the fight
 - [ ] Add the predictions to the upcoming.csv
 - [ ] Add the predictions to the previous_matches.csv
+
+### Model
+- [ ] Save the model
+
 

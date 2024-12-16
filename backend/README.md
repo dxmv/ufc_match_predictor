@@ -2,15 +2,9 @@
 
 - [x] Scrape the upcoming match data
 - [x] Get all the differences between the fighters
-- [x] Add it as a row to the "upcoming_matches.csv"
-- [ ] At the end of each week, add the "upcoming_matches.csv" to "previous_matches.csv"
-- [ ] Remove unnecessary columns from the "previous_matches.csv"
-- [ ] Make sure that the "upcoming_matches.csv" matches the "previous_matches.csv" format
-- [ ] Scrape more
-    - [ ] Location
-    - [ ] Date
-    - [ ] Name of event
-    - [ ] Weight class
+- [x] Add it as a row to the "upcoming.csv"
+- [ ] At the end of each week, add the "upcoming.csv" to "previous.csv"
+- [ ] Remove unnecessary columns from the "previous.csv"
 
 ## Model
 

@@ -58,7 +58,9 @@ def scrape_matches(event_soup):
     """
     matches = event_soup.find_all('div', class_='c-listing-fight__content')
     match_data_list = []  # Initialize an empty list to store match data
-
+    location = event_soup.find('div', class_='field--name-venue').text.split('\n')[1].strip()
+    date = event_soup.find('div', class_='c-hero__headline-suffix tz-change-inner').text.strip().split('/')[0].split(',')[1].strip()
+    print(f"Location: {location}, Date: {date}")
     for match in matches:
         # get the fighter names
         red_fighter = match.find('div', class_='c-listing-fight__corner-name--red')
@@ -67,9 +69,9 @@ def scrape_matches(event_soup):
         print(f"Adding match: {red_name} vs {blue_name}...")
         
         # get the odds
-        [red_odds, blue_odds] = match.find_all('span', class_='c-listing-fight__odds-amount')
-        red_odds = int(red_odds.text.strip().replace('+', ''))
-        blue_odds = int(blue_odds.text.strip().replace('+', ''))
+        [red_odds_elem, blue_odds_elem] = match.find_all('span', class_='c-listing-fight__odds-amount')
+        red_odds = int(red_odds_elem.text.strip()) if red_odds_elem.text.strip() != '-' else None
+        blue_odds = int(blue_odds_elem.text.strip()) if blue_odds_elem.text.strip() != '-' else None
 
         # get the links to the fighters' profiles
         red_link = red_fighter.find('a').get('href')
@@ -107,6 +109,9 @@ def scrape_matches(event_soup):
         match_data['KODif'] = red_profile['wins_by_ko'] - blue_profile['wins_by_ko']
         match_data['SubDif'] = red_profile['wins_by_sub'] - blue_profile['wins_by_sub']
         match_data['SigStrDif'] = red_profile['sig_strikes_per_min'] - blue_profile['sig_strikes_per_min']
+        match_data['Location'] = location
+        match_data['Date'] = date
+        
         # determine who has the better rank
         if red_profile['rank'] is None and blue_profile['rank'] is None:
             match_data['BetterRank'] = 'Neither'
@@ -125,6 +130,7 @@ def scrape_matches(event_soup):
         # Append the match data to the list
         match_data_list.append(match_data)
         print(f"Added match: {red_name} vs {blue_name}")
+        print("--------------------------------")
 
     # Use the data manager to update the upcoming matches CSV
     update_upcoming_matches(match_data_list)
