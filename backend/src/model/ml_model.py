@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 PATH_TO_DATA = "../data/previous-matches.csv"
 PATH_TO_UPCOMING_DATA = "../data/upcoming.csv"
+
 class UFCModel:
     def __init__(self):
         # Load data
@@ -13,7 +14,7 @@ class UFCModel:
         self.features = ["AgeDif","BetterRank","ReachDif","RedOdds","BlueOdds","WinDif","LossDif","HeightDif","SigStrDif","KODif","SubDif"]
         self.extend_data()
         self.scaler = StandardScaler()
-        self.model = LogisticRegression(max_iter=500)
+        self.model = LogisticRegression(random_state=42)
 
 
     def extend_data(self):
@@ -26,7 +27,7 @@ class UFCModel:
 
     def train(self) -> float:
         """
-        This method trains the RandomForestClassifier model using the features and target variable from the dataset.
+        This method trains the LogisticRegression model using the features and target variable from the dataset.
         It splits the data into training and testing sets, trains the model on the training set, and evaluates the model
         on the testing set. The method returns the accuracy score of the model on the testing set.
         
@@ -82,14 +83,14 @@ class UFCModel:
         upcoming_df['predicted'] = predictions
 
         # Save the result
-        upcoming_df.to_csv(upcoming_data_path, index=False)
+        upcoming_df.to_csv(PATH_TO_UPCOMING_DATA, index=False)
 
         return predictions
 
-model = UFCModel()
+# model = UFCModel()
 # score = model.train()
 # print(f"Model accuracy: {score:.5f}")
 
-# Example usage
-# upcoming_predictions = model.predict("../data/upcoming.csv")
+
+# upcoming_predictions = model.predict()
 # print("Predictions for upcoming matches:", upcoming_predictions)

@@ -27,8 +27,8 @@
 
 ### Scraping
 - [x] Scrape location & date of the fight
-- [ ] Add the predictions to the upcoming.csv
-- [ ] Add the predictions to the previous_matches.csv
+- [x] Add the predictions to the upcoming.csv
+- [x] Add the predictions to the previous_matches.csv
 
 ### Model
 - [ ] Save the model
