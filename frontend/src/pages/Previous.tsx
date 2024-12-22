@@ -2,7 +2,7 @@ import { FaClipboardList } from 'react-icons/fa'; // Changed icon for matches tr
 import MatchList from '../components/match_list/MatchList';
 import { Match } from '../types/match_types';
 import { useEffect, useState } from 'react';
-import { fetchPreviousMatches } from '../services/api/matchesApi';
+import { fetchAccuracy, fetchPreviousMatches } from '../services/api/matchesApi';
 import SearchBar from '../components/SearchBar';
 
 const Previous: React.FC = () => {
@@ -10,6 +10,9 @@ const Previous: React.FC = () => {
     const [matches, setMatches] = useState<Array<Match>>([]);
     const [page, setPage] = useState<number>(1); // State for pagination
     const [hasMore, setHasMore] = useState<boolean>(true); // State to track if more matches are available
+    const [accuracy, setAccuracy] = useState<number>(0); // Accuracy of the model
+
+
 
     // get the previous matches
     useEffect(() => {
@@ -18,7 +21,13 @@ const Previous: React.FC = () => {
             setMatches(prevMatches => [...prevMatches, ...data]); // Append new matches to existing ones
             setHasMore(data.length > 0); // Check if more matches are available
         };
+        // get the accuracy of the model
+        const loadAccuracy = async () => {
+            const accuracy = await fetchAccuracy();
+            setAccuracy(accuracy);
+        };
         loadMatches();
+        loadAccuracy();
     }, [page]);
 
     const loadMoreMatches = () => {
@@ -37,7 +46,7 @@ const Previous: React.FC = () => {
             <div className="relative h-96 bg-cover bg-center mb-10" style={{ backgroundImage: `url(https://dmxg5wxfqgb4u.cloudfront.net/styles/background_image_xl/s3/2024-11/120724-ufc-310-pantoja-vs-asakura-EVENT-ART.jpg?h=d1cb525d&itok=XWZWovZk)` }}>
                 {/* Black overlay */}
                 <div className="absolute top-0 left-0 w-full h-full bg-black opacity-60 flex flex-col justify-center items-center">
-                    <h1 className="text-white text-5xl font-bold mt-10">Model accuracy: 67%</h1>
+                    <h1 className="text-white text-5xl font-bold mt-10">Model accuracy: {(accuracy * 100).toFixed(2)}%</h1>
                     {/* Date and Location in the same row with icons */}
                     <div className="flex items-center text-white text-lg mt-5">
                         <span className="mr-2">

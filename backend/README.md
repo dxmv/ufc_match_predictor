@@ -1,23 +1,11 @@
 ## Scraping
 
-- [x] Scrape the upcoming match data
-- [x] Get all the differences between the fighters
-- [x] Add it as a row to the "upcoming.csv"
-- [ ] At the end of each week, add the "upcoming.csv" to "previous.csv"
-- [ ] Remove unnecessary columns from the "previous.csv"
+- [ ] At the end of each week, add the "upcoming.csv" to "previous_matches.csv"
+    - [ ] Somehow also get the result of the matches in "upcoming.csv" and add it as a column to the "upcoming.csv"
+    - [ ] Also scrape the upcoming matches for the next week and add it to "upcoming.csv"
 
 ## Model
 
-- [ ] Feature Engineering
 - [ ] Make my own logistic regression model
-- [x] Train the model
-- [x] Achieve the accuracy of ~65%
-    - [ ] Try to improve the accuracy using the fighting style of the fighters
-- [ ] Save the model
-- [ ] Load the model
-- [x] Make predictions
-
-## API
-
-- [ ] Upcoming matches prediction
-- [ ] Previous matches prediction
+- [ ] Maybe more features
+- [ ] Reach 70% accuracy

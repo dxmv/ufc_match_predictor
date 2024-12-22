@@ -1,10 +1,14 @@
+import os
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-PATH_TO_DATA = "../data/previous-matches.csv"
-PATH_TO_UPCOMING_DATA = "../data/upcoming.csv"
+
+# Get the directory containing the script
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+PATH_TO_DATA = os.path.join(os.path.dirname(CURRENT_DIR), "data", "previous-matches.csv")
+PATH_TO_UPCOMING_DATA = os.path.join(os.path.dirname(CURRENT_DIR), "data", "upcoming.csv")
 
 class UFCModel:
     def __init__(self):
@@ -15,7 +19,6 @@ class UFCModel:
         self.extend_data()
         self.scaler = StandardScaler()
         self.model = LogisticRegression(random_state=42)
-
 
     def extend_data(self):
         # Create target variable (1 for R_fighter win, 0 for B_fighter win)
@@ -56,12 +59,28 @@ class UFCModel:
 
         return score
 
+    def get_accuracy(self) -> float:
+        """
+        This method returns the accuracy of the trained model on the training data.
+        
+        Returns:
+            float: The accuracy score of the model on the training data.
+        """
+        if not hasattr(self.model, 'coef_'):
+            raise ValueError("Model has not been trained yet. Call train() first.")
+            
+        X, y = self.df[self.features], self.df['target']
+        
+        # Check if scaler has been fitted
+        if not hasattr(self.scaler, 'mean_'):
+            self.scaler.fit(X)
+            
+        X = self.scaler.transform(X)
+        return self.model.score(X, y)
+
     def predict(self):
         """
         This method predicts the results for upcoming matches using the trained model.
-        
-        Args:
-            upcoming_data_path (str): The path to the CSV file containing upcoming match data.
         
         Returns:
             np.ndarray: Predictions for the upcoming matches (1 for R_fighter win, 0 for B_fighter win).
@@ -90,7 +109,8 @@ class UFCModel:
 # model = UFCModel()
 # score = model.train()
 # print(f"Model accuracy: {score:.5f}")
-
+# accuracy = model.get_accuracy()
+# print(f"Model accuracy on training data: {accuracy:.5f}")
 
 # upcoming_predictions = model.predict()
 # print("Predictions for upcoming matches:", upcoming_predictions)

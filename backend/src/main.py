@@ -1,7 +1,8 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
 from model.ml_model import UFCModel
+
 PATH_TO_UPCOMING_DATA = "./data/upcoming.csv"
 PATH_TO_PREVIOUS_DATA = "./data/previous-matches.csv"
 
@@ -18,6 +19,12 @@ model = UFCModel()
 def train():
     score = model.train()
     return jsonify({"message": "Model trained successfully!", "accuracy": score})
+
+# Returns the accuracy of the model
+@app.route('/accuracy', methods=['GET'])
+def accuracy():
+    score = model.get_accuracy()
+    return jsonify({"message": "Model accuracy!", "accuracy": score})
 
 # Route: Predict upcoming matches
 @app.route('/upcoming', methods=['GET'])
@@ -42,4 +49,5 @@ def main():
     app.run(debug=True)
 
 if __name__ == "__main__":
+    model.train()
     main()

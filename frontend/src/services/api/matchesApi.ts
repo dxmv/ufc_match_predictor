@@ -54,3 +54,18 @@ export const fetchUpcomingMatches = async (): Promise<Array<Match>> => {
     // Map the incoming data to the Match type
     return data.map(mapToMatchType);
 };
+
+/**
+ * Fetches the accuracy of the model from the backend
+ * @returns The accuracy of the model
+ */
+export const fetchAccuracy = async (): Promise<number> => {
+    const response = await fetch(`${BACKEND_URL}/accuracy`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    const data = await response.json();
+    return data.accuracy;
+};
