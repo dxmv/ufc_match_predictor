@@ -1,8 +1,9 @@
 import { Match, Fighter } from "../../types/match_types";
 import { useNavigate } from 'react-router-dom';
-import WinnerSquare from "../WinnerSquare";
+import WinnerSquare from "../match_squares/WinnerSquare";
+import PredictedSquare from "../match_squares/PredictedSquare";
 
-const MatchCard = ({ match }: { match: Match }) => {
+const MatchCard = ({ match, upcoming }: { match: Match, upcoming?: boolean }) => {
     const navigate = useNavigate();
 
     const handleCardClick = () => {
@@ -12,7 +13,7 @@ const MatchCard = ({ match }: { match: Match }) => {
 
     return (
         <div 
-            className='mt-10 flex flex-col items-center justify-between w-full p-6 border-b hover:bg-gray-100 transition-colors cursor-pointer' 
+            className={`flex flex-col items-center justify-between w-full p-6 border-b transition-colors cursor-pointer mt-2 ${!upcoming ? (match.predicted === match.winner ? 'bg-green-100 hover:bg-green-200' : 'bg-red-100 hover:bg-red-200'):'hover:bg-gray-100'}`} 
             onClick={handleCardClick}
         >
             <div className='flex items-center justify-around w-1/5 mb-2'>
@@ -21,20 +22,21 @@ const MatchCard = ({ match }: { match: Match }) => {
                 <div className='text-sm text-gray-500 text-blue-500'>{match.blue_odds ? match.blue_odds : "-"}</div>
             </div>
             <div className='flex flex-row items-center justify-between w-full'>
-                <FighterPart fighter={match.red_fighter} winner={match.winner === "Red"}/>
+                <FighterPart fighter={match.red_fighter} winner={match.winner === "Red"} predicted={match.predicted == "Red"} />
                 <div className='text-xl font-bold w-1/3 flex justify-center items-center'>vs</div>
-                <FighterPart fighter={match.blue_fighter} winner={match.winner === "Blue"} blue={true} />
+                <FighterPart fighter={match.blue_fighter} winner={match.winner === "Blue"} predicted={match.predicted == "Blue"} blue={true} />
             </div>
         </div>
     );
 };
 
-const FighterPart = ({ fighter, blue, winner }: { fighter: Fighter, blue?: boolean, winner?: boolean }) => {
+const FighterPart = ({ fighter, blue, winner, predicted }: { fighter: Fighter, blue?: boolean, winner?: boolean, predicted?: boolean }) => {
     return (
         <div className={`flex flex-col items-center justify-center relative w-1/3`}>
             <img src={"https://dmxg5wxfqgb4u.cloudfront.net/2024-11/JONES_JON_BELT_11-16.png"} alt={fighter.name} className='max-w-80 max-h-80' />
             <p className={`mt-5 text-lg font-bold ${blue ? 'text-blue-500' : 'text-red-500'}`}>{fighter.name}</p>
             {winner && <WinnerSquare blue={blue} />}
+            {predicted && <PredictedSquare blue={blue} correct={predicted === winner} />}
         </div>
     );
 };

@@ -10,6 +10,7 @@ export interface Match {
     red_odds: number;
     blue_odds: number;
     winner: "Red" | "Blue" | null;
+    predicted?: "Red" | "Blue" | null;
 }
 
 export interface UFCEvent {

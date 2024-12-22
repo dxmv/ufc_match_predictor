@@ -22,7 +22,7 @@ const Upcoming: React.FC = () => {
 
     return (
         <>
-            {event ? <EventPage event={event} /> : <Loading />}
+            {event ? <EventPage event={event} upcoming={true} /> : <Loading />}
         </>
     );
 };

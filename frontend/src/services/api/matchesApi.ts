@@ -8,6 +8,7 @@ const BACKEND_URL = "http://127.0.0.1:5000";
  * @returns A Match object
  */
 const mapToMatchType = (rawMatch: any): Match => {
+    console.log(rawMatch);
     const redFighter: Fighter = { id: 'red', name: rawMatch.RedFighter, };
     const blueFighter: Fighter = { id: 'blue', name: rawMatch.BlueFighter };
 
@@ -18,6 +19,7 @@ const mapToMatchType = (rawMatch: any): Match => {
         red_odds: rawMatch.RedOdds,
         blue_odds: rawMatch.BlueOdds,
         winner: rawMatch.Winner,
+        predicted: rawMatch.predicted == 1 ? "Red" : "Blue",
     };
 };
 

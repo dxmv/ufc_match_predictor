@@ -3,7 +3,7 @@ import { UFCEvent } from '../types/match_types';
 import MatchList from '../components/match_list/MatchList';
 import { FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa';
 
-const EventPage = ({event}: {event: UFCEvent}) => {
+const EventPage = ({event,upcoming}: {event: UFCEvent,upcoming?:boolean}) => {
 
    return (
        <div className="min-h-screen">
@@ -26,7 +26,7 @@ const EventPage = ({event}: {event: UFCEvent}) => {
                </div>
            </div>
            {/* List of fights */}
-           <MatchList matches={event.matches} />
+           <MatchList matches={event.matches} upcoming={upcoming} />
        </div>
    );
 };
