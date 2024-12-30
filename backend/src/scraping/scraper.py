@@ -1,4 +1,4 @@
-from data_manager import update_upcoming_matches
+from data_manager import update_upcoming_matches, update_fighters_images
 import requests
 from bs4 import BeautifulSoup
 
@@ -58,6 +58,7 @@ def scrape_matches(event_soup):
     """
     matches = event_soup.find_all('div', class_='c-listing-fight__content')
     match_data_list = []  # Initialize an empty list to store match data
+    fighters_images = {}
     location = event_soup.find('div', class_='field--name-venue').text.split('\n')[1].strip()
     date = event_soup.find('div', class_='c-hero__headline-suffix tz-change-inner').text.strip().split('/')[0].split(',')[1].strip()
     print(f"Location: {location}, Date: {date}")
@@ -92,11 +93,17 @@ def scrape_matches(event_soup):
         
         # Add all keys from RedProfile separately
         for key, value in red_profile.items():
-            match_data[f'Red_{key}'] = value
+            if key == "ImageLink":
+                fighters_images[red_name] = value
+            else:
+                match_data[f'Red_{key}'] = value
         
         # Add all keys from BlueProfile separately
         for key, value in blue_profile.items():
-            match_data[f'Blue_{key}'] = value
+            if key == "ImageLink":
+                fighters_images[blue_name] = value
+            else:
+                match_data[f'Blue_{key}'] = value
 
         # Add differences in relevant attributes
         match_data['HeightDif'] = red_profile['height_cms'] - blue_profile['height_cms']
@@ -134,6 +141,9 @@ def scrape_matches(event_soup):
 
     # Use the data manager to update the upcoming matches CSV
     update_upcoming_matches(match_data_list)
+    # update the fighters.csv file with the new images
+    update_fighters_images(fighters_images)
+
 
 def scrape_fighter_profile(fighter_link: str):
     """
@@ -162,7 +172,8 @@ def scrape_fighter_profile(fighter_link: str):
     [wins, draws, losses] = soup.find('p', class_='hero-profile__division-body').text.strip().split(' ')[0].split('-')
 
     # get the age
-    age = soup.find('div', class_='field--name-age').text.strip()
+    age_field = soup.find('div', class_='field--name-age')
+    age = age_field.text.strip() if age_field else 0
 
     all_rows_with_3_cols = soup.find_all('div', class_='c-bio__row--3col')
     # row with height & weight
@@ -171,12 +182,12 @@ def scrape_fighter_profile(fighter_link: str):
     height_div = bio_row_3.find_all('div', class_='c-bio__text')
     height_cms = inches_to_cms(float(height_div[1].text.strip())) if len(height_div) > 1 else 0.0
     # row with reach & leg reach
-    bio_row_4 = all_rows_with_3_cols[1]
+    bio_row_4 = all_rows_with_3_cols[1] if len(all_rows_with_3_cols) > 1 else None
     # get the reach
-    reach_div = bio_row_4.find_all('div', class_='c-bio__text')
-    reach_cms = inches_to_cms(float(reach_div[1].text.strip())) if len(reach_div) > 1 else 0.0
+    reach_div = bio_row_4.find_all('div', class_='c-bio__text') if bio_row_4 else None
+    reach_cms = inches_to_cms(float(reach_div[1].text.strip())) if reach_div and len(reach_div) > 1 else 0.0
     # get the leg reach
-    leg_reach_cm = inches_to_cms(float(reach_div[2].text.strip())) if len(reach_div) > 2 else 0.0
+    leg_reach_cm = inches_to_cms(float(reach_div[2].text.strip())) if reach_div and len(reach_div) > 2 else 0.0
 
     athlete_stats = soup.find_all('div', class_='athlete-stats__stat')
     # get wins by ko
@@ -205,6 +216,10 @@ def scrape_fighter_profile(fighter_link: str):
         if text == 'PFP':
             rank = int(pfp[1:]) if pfp else None
 
+    # get the fighter's image
+    fighter_image = soup.find('img', class_='hero-profile__image')
+    fighter_image_link = fighter_image.get('src') if fighter_image else None
+
     # Return all the collected information as a dictionary
     return {
         "wins": int(wins),
@@ -217,7 +232,8 @@ def scrape_fighter_profile(fighter_link: str):
         "wins_by_ko": wins_by_ko,
         "wins_by_sub": wins_by_sub,
         "sig_strikes_per_min": sig_strikes_per_min,
-        "rank": rank
+        "rank": rank,
+        "ImageLink": fighter_image_link
     }
 
 
