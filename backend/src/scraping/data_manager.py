@@ -4,6 +4,8 @@ from typing import List, Dict, Union
 previous_matches_path = "../data/previous-matches.csv"
 upcoming_matches_path = "../data/upcoming.csv"
 fighters_path = "../data/fighters.csv"
+
+
 def merge_upcoming_to_previous():
     """Adds upcoming matches data to the previous matches file"""
     upcoming_df = pd.read_csv(upcoming_matches_path)
@@ -61,3 +63,41 @@ def update_upcoming_matches(new_matches: List[Dict[str, Union[str, float, int]]]
     
     # Save new data to upcoming matches file, overwriting existing content
     new_df.to_csv(upcoming_matches_path, index=False)
+
+def populate_fighters_csv_with_previous_matches(scrape_fighter_profile):
+    """
+    Populates the fighters.csv file with the fighters from the previous matches
+    and their profile images by scraping each fighter's profile
+    
+    Args:
+        scrape_fighter_profile: Function to scrape fighter profiles
+    """
+    previous_df = pd.read_csv(previous_matches_path)
+    
+    # Extract unique fighters from both RedFighter and BlueFighter columns
+    unique_fighters = pd.Series(previous_df[['RedFighter', 'BlueFighter']].values.ravel()).unique()[:500]
+    
+    # Create a dictionary to store fighter names and their image links
+    fighter_images = {}
+    
+    print(len(unique_fighters))
+    i = 0
+    # Scrape profile for each fighter
+    for fighter in unique_fighters:
+        try:
+            print(f"Scraping profile for {fighter}")
+            profile = scrape_fighter_profile(f"https://www.ufc.com/athlete/{fighter.split(' ')[0].lower()}-{fighter.split(' ')[1].lower()}")
+            fighter_images[fighter] = profile['ImageLink']
+        except Exception as e:
+            print(f"Error scraping profile for {fighter}: {str(e)}")
+            continue
+        i += 1
+        if i % 100 == 0:
+            print(f"Scraped {i} profiles")
+    
+    # Update the fighters.csv file with the new data
+    update_fighters_images(fighter_images)
+
+if __name__ == "__main__":
+    from scraper import scrape_fighter_profile
+    populate_fighters_csv_with_previous_matches(scrape_fighter_profile)
