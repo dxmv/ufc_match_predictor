@@ -13,7 +13,7 @@ const mapToMatchType = (rawMatch: any): Match => {
     const blueFighter: Fighter = { id: 'blue', name: rawMatch.BlueFighter, image_link: rawMatch.BlueFighterImage };
 
     return {
-        id: `${rawMatch.Date}-${rawMatch.RedFighter}-${rawMatch.BlueFighter}`, // Example ID
+        id: `${rawMatch.Date}_${rawMatch.RedFighter}_${rawMatch.BlueFighter}`, // Example ID
         red_fighter: redFighter,
         blue_fighter: blueFighter,
         red_odds: rawMatch.RedOdds,
@@ -24,10 +24,53 @@ const mapToMatchType = (rawMatch: any): Match => {
 };
 
 /**
+ * Fetches a single upcoming match from the backend
+ * @param matchId The ID of the match in the format "DATE-REDNAME-BLUENAME"
+ * @returns A Match object
+ */
+export const fetchUpcomingMatch = async (matchId: string): Promise<Match> => {
+    const response = await fetch(`${BACKEND_URL}/upcoming/match/${matchId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch upcoming match");
+    }
+
+    const data = await response.json();
+    return mapToMatchType(data);
+};
+
+/**
+ * Fetches a single previous match from the backend
+ * @param matchId The ID of the match in the format "DATE-REDNAME-BLUENAME"
+ * @returns A Match object
+ */
+export const fetchPreviousMatch = async (matchId: string): Promise<Match> => {
+    console.log(matchId);
+    const response = await fetch(`${BACKEND_URL}/previous/match/${matchId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch previous match");
+    }
+
+    const data = await response.json();
+    return mapToMatchType(data);
+};
+
+/**
  * Fetches the previous matches from the backend
  * @returns An array of Match objects
  */
-export const fetchPreviousMatches = async (page?: number,per_page?: number): Promise<Array<Match>> => {
+export const fetchPreviousMatches = async (page?: number, per_page?: number): Promise<Array<Match>> => {
     const response = await fetch(`${BACKEND_URL}/previous?page=${page}&per_page=${per_page}`, {
         method: "GET",
         headers: {

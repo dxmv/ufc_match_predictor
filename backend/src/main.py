@@ -45,6 +45,59 @@ def previous():
     paginated_data = previous_df.iloc[start:end]
     return paginated_data.to_json(orient="records")
 
+# Route: Get a single upcoming match by ID
+@app.route("/upcoming/match/<match_id>", methods=['GET'])
+def get_upcoming_match(match_id):
+    try:
+        date, red_name, blue_name = match_id.split('_')
+    except ValueError:
+        return jsonify({"error": "Invalid match ID format"}), 400
+
+    upcoming_df = pd.read_csv(PATH_TO_UPCOMING_DATA)
+    matches = upcoming_df[
+        (upcoming_df['RedFighter'] == red_name) &
+        (upcoming_df['BlueFighter'] == blue_name)
+    ]
+
+    if matches.empty:
+        return jsonify({"error": "Match not found"}), 404
+
+    # If multiple matches, filter by date
+    if len(matches) > 1:
+        matches = matches[matches['Date'] == date]
+
+    if not matches.empty:
+        return matches.iloc[0].to_json()
+    else:
+        return jsonify({"error": "Match not found"}), 404
+
+# Route: Get a single previous match by ID
+@app.route("/previous/match/<match_id>", methods=['GET'])
+def get_previous_match(match_id):
+    try:
+        date, red_name, blue_name = match_id.split('_')
+    except ValueError:
+        return jsonify({"error": "Invalid match ID format"}), 400
+    print(date,red_name,blue_name)
+
+    previous_df = pd.read_csv(PATH_TO_PREVIOUS_DATA)
+    matches = previous_df[
+        (previous_df['RedFighter'] == red_name) &
+        (previous_df['BlueFighter'] == blue_name)
+    ]
+
+    if matches.empty:
+        return jsonify({"error": "Match not found"}), 404
+
+    # If multiple matches, filter by date
+    if len(matches) > 1:
+        matches = matches[matches['Date'] == date]
+
+    if not matches.empty:
+        return matches.iloc[0].to_json()
+    else:
+        return jsonify({"error": "Match not found"}), 404
+
 def main():
     app.run(debug=True)
 

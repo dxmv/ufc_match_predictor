@@ -7,13 +7,14 @@ const MatchCard = ({ match, upcoming }: { match: Match, upcoming?: boolean }) =>
     const navigate = useNavigate();
 
     const handleCardClick = () => {
-        navigate(`/match/${match.id}`); // Redirect to the match details page
+        
+        navigate(`/match/${upcoming ? "upcoming/" : ""}${match.id}`); // Redirect to the match details page
     };
 
 
     return (
         <div 
-            className={`flex flex-col items-center justify-between w-full p-6 border-b transition-colors cursor-pointer mt-2 ${!upcoming ? (match.predicted === match.winner ? 'bg-green-100 hover:bg-green-200' : 'bg-red-100 hover:bg-red-200'):'hover:bg-gray-100'}`} 
+            className={`flex flex-col items-center justify-between w-full p-6 border-b transition-colors cursor-pointer mt-4 ${!upcoming ? (match.predicted === match.winner ? 'bg-green-100 hover:bg-green-200' : 'bg-red-100 hover:bg-red-200'):'bg-gray-100 hover:bg-gray-300'}`} 
             onClick={handleCardClick}
         >
             <div className='flex items-center justify-around w-1/5 mb-2'>
@@ -34,7 +35,7 @@ const FighterPart = ({ fighter, blue, winner, predicted }: { fighter: Fighter, b
     return (
         <div className={`flex flex-col items-center justify-center relative w-1/3`}>
             <img src={fighter.image_link} alt={fighter.name} className='max-w-80 max-h-80' />
-            <p className={`mt-5 text-lg font-bold ${blue ? 'text-blue-500' : 'text-red-500'}`}>{fighter.name}</p>
+            <p className={`mt-5 text-lg font-bold ${blue ? 'text-blue-500 hover:text-blue-700' : 'text-red-500 hover:text-red-700'}`}>{fighter.name}</p>
             {winner && <WinnerSquare blue={blue} />}
             {predicted && <PredictedSquare blue={blue} correct={predicted === winner} />}
         </div>

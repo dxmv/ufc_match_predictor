@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useParams } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -18,6 +18,11 @@ const App: React.FC = () => {
         matches: [],
     };
 
+    const MatchPageWrapper = ({ upcoming }: { upcoming: boolean }) => {
+        const { matchId } = useParams<{ matchId: string }>();
+        return <MatchPage matchId={matchId || '0'} upcoming={upcoming} />;
+    };
+
     return (
         <Router>
             <Navbar />
@@ -26,7 +31,8 @@ const App: React.FC = () => {
                 <Route path="/upcoming" element={<Upcoming />} />
                 <Route path="/previous" element={<Previous />} />
                 <Route path="/event/:eventId" element={<EventPage event={event} />} />
-                <Route path="/match/:matchId" element={<MatchPage />} />
+                <Route path="/match/upcoming/:matchId" element={<MatchPageWrapper upcoming={true} />} />
+                <Route path="/match/:matchId" element={<MatchPageWrapper upcoming={false} />} />
             </Routes>
             <Footer />
         </Router>

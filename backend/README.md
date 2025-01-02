@@ -25,4 +25,4 @@
 
 ## Backend
 
-- [ ] When getting the fighter data, also get the fighter's image
+- [x] When getting the fighter data, also get the fighter's image
