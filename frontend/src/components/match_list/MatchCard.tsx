@@ -33,7 +33,7 @@ const MatchCard = ({ match, upcoming }: { match: Match, upcoming?: boolean }) =>
 const FighterPart = ({ fighter, blue, winner, predicted }: { fighter: Fighter, blue?: boolean, winner?: boolean, predicted?: boolean }) => {
     return (
         <div className={`flex flex-col items-center justify-center relative w-1/3`}>
-            <img src={"https://dmxg5wxfqgb4u.cloudfront.net/2024-11/JONES_JON_BELT_11-16.png"} alt={fighter.name} className='max-w-80 max-h-80' />
+            <img src={fighter.image_link} alt={fighter.name} className='max-w-80 max-h-80' />
             <p className={`mt-5 text-lg font-bold ${blue ? 'text-blue-500' : 'text-red-500'}`}>{fighter.name}</p>
             {winner && <WinnerSquare blue={blue} />}
             {predicted && <PredictedSquare blue={blue} correct={predicted === winner} />}

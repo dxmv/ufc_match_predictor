@@ -1,6 +1,7 @@
 export interface Fighter {
     id: string;
     name: string;
+    image_link: string;
 }
 
 export interface Match {

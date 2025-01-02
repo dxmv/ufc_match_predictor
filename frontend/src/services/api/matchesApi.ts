@@ -9,8 +9,8 @@ const BACKEND_URL = "http://127.0.0.1:5000";
  */
 const mapToMatchType = (rawMatch: any): Match => {
     console.log(rawMatch);
-    const redFighter: Fighter = { id: 'red', name: rawMatch.RedFighter, };
-    const blueFighter: Fighter = { id: 'blue', name: rawMatch.BlueFighter };
+    const redFighter: Fighter = { id: 'red', name: rawMatch.RedFighter, image_link: rawMatch.RedFighterImage };
+    const blueFighter: Fighter = { id: 'blue', name: rawMatch.BlueFighter, image_link: rawMatch.BlueFighterImage };
 
     return {
         id: `${rawMatch.Date}-${rawMatch.RedFighter}-${rawMatch.BlueFighter}`, // Example ID

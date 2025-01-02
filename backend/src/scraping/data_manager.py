@@ -98,6 +98,35 @@ def populate_fighters_csv_with_previous_matches(scrape_fighter_profile):
     # Update the fighters.csv file with the new data
     update_fighters_images(fighter_images)
 
+def populate_fights_with_images(file_path: str):
+    """
+    Populates the fights with images
+    """
+    fights_df = pd.read_csv(file_path)
+    fighters_df = pd.read_csv(fighters_path)
+
+    for index, row in fights_df.iterrows():
+        print(f"Processing row {index}")
+        red_fighter = row['RedFighter']
+        blue_fighter = row['BlueFighter']
+        
+        # Check if the red fighter exists in the fighters_df
+        red_fighter_image = None
+        red_fighter_row = fighters_df[fighters_df['FighterName'] == red_fighter]
+        if not red_fighter_row.empty:
+            red_fighter_image = red_fighter_row['ImageLink'].values[0]
+        
+        # Check if the blue fighter exists in the fighters_df
+        blue_fighter_image = None
+        blue_fighter_row = fighters_df[fighters_df['FighterName'] == blue_fighter]
+        if not blue_fighter_row.empty:
+            blue_fighter_image = blue_fighter_row['ImageLink'].values[0]
+        
+        fights_df.at[index, 'RedFighterImage'] = red_fighter_image
+        fights_df.at[index, 'BlueFighterImage'] = blue_fighter_image
+    print("Finished")
+    fights_df.to_csv(file_path, index=False)
+
 if __name__ == "__main__":
-    from scraper import scrape_fighter_profile
-    populate_fighters_csv_with_previous_matches(scrape_fighter_profile)
+    populate_fights_with_images(previous_matches_path)
+    populate_fights_with_images(upcoming_matches_path)
